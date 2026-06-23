@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    image: gerald22/guest_book:v1
     ports:
       - "5000:5000"
     healthcheck:

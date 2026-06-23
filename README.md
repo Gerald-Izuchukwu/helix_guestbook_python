@@ -1,4 +1,4 @@
-# 📒 Guestbook Application
+# 📒 Guest Book Application
 
 A containerised Flask + Redis guestbook application demonstrating Docker fundamentals — multi-service orchestration, custom networking, persistent volumes, image security scanning, and Docker Hub publishing.
 
@@ -104,10 +104,10 @@ redis
 
 ```bash
 # Build the web image
-docker build -t guestbook:v1 .
+docker build -t guest_book:v1 .
 
 # Verify the image was created
-docker images | grep guestbook
+docker images | grep guest_book
 ```
 
 ### Build via Compose (recommended)
@@ -204,7 +204,7 @@ docker compose down -v
 ```yaml
 services:
   web:
-    build: .                        # Builds from the Dockerfile in the current directory
+    image: gerald22/guest_book:v1
     ports:
       - "5000:5000"                 # Maps host port 5000 → container port 5000
     healthcheck:
@@ -369,65 +369,28 @@ docker volume inspect guestbook_redis_data_1 | grep Mountpoint
 
 ## Docker Scout Results
 
-Docker Scout was run against the locally built `guestbook:v1` image.
+Docker Scout was run against the locally built `guest_book:v1` image.
 
 ### Quick View
 
 ```bash
-docker scout quickview guestbook:v1
+docker scout quickview gerald22/guest_book:v1
 ```
 
-```
-    i New version 1.x.x available.
+![Docker Scout Overview](images/docker_scout_overview.png)
 
-  ## Overview
-
-             │         Analyzed Image
-  ───────────┼──────────────────────────────────────
-   Target    │  guestbook:v1
-    digest   │  sha256:xxxxxxxxxxxx
-    platform │ linux/amd64
-    provenance│ not attested
-    sbom      │ not attested
-
-  ## Packages and Vulnerabilities
-
-   0C  2H  12M  6L    guestbook:v1
-
-  ## Policy Evaluation
-
-  Status │  Policy
-  ───────┼────────────────────────────────────────────────────────
-    ✓    │ No AGPL v3 licensed packages
-    ✗    │ No high-profile vulnerabilities
-    ✓    │ No outdated base images
-    ✗    │ No fixable critical or high vulnerabilities
-```
 
 ### CVE Scan
 
 ```bash
-docker scout cves guestbook:v1
+docker scout cves gerald22/guest_book:v1
 ```
 
 **Summary of findings:**
 
-| Severity | Count | Notes |
-|----------|-------|-------|
-| Critical | 0 | None detected |
-| High | 2 | In OS-level packages (apt dependencies) |
-| Medium | 12 | Mix of Python stdlib and system libs |
-| Low | 6 | Informational, no active exploits |
+![Docker Scout CVES](images/docker_scout_cves.png)
 
-**Notable CVEs (examples):**
 
-| CVE ID | Package | Severity | Fix Available |
-|--------|---------|----------|--------------|
-| CVE-2023-XXXX | libssl | High | Yes — update base image |
-| CVE-2023-YYYY | libc-bin | High | Yes — update base image |
-| CVE-2024-XXXX | pip | Medium | Yes — `pip install --upgrade pip` |
-
-> **Note:** The actual CVE IDs, counts, and package names in your environment will differ based on the exact build date and Python/system package versions resolved at build time. Run `docker scout cves guestbook:v1` after building your image to capture the live output and replace the table above with your actual results.
 
 ### Recommendations
 
@@ -435,7 +398,7 @@ docker scout cves guestbook:v1
 2. **Pin dependency versions** in `requirements.txt` to avoid unexpected upgrades
 3. **Add SBOM attestation** for supply chain visibility:
    ```bash
-   docker scout sbom guestbook:v1
+   docker scout sbom gerald22/guest_book:v1
    ```
 4. **Enable Scout policies** in Docker Hub to gate pushes on vulnerability thresholds
 
@@ -448,10 +411,10 @@ The application image is published to Docker Hub for public consumption.
 ### Pull the image
 
 ```bash
-docker pull gerald22/guestbook:v1
+docker pull gerald22/guest_book:v1
 ```
 
-🔗 **Docker Hub Repository:** `https://hub.docker.com/r/gerald22/guestbook`
+🔗 **Docker Hub Repository:** `https://hub.docker.com/r/gerald22/guest_book`
 
 ### Publishing steps (for reference)
 
@@ -460,13 +423,13 @@ docker pull gerald22/guestbook:v1
 docker login
 
 # 2. Tag the locally built image
-docker tag guestbook:v1 gerald22/guestbook:v1
+docker tag guest_book:v1 gerald22/guest_book:v1
 
 # 3. Push to Docker Hub
-docker push gerald22/guestbook:v1
+docker push gerald22/guest_book:v1
 
 # 4. Verify it's available
-docker pull gerald22/guestbook:v1
+docker pull gerald22/guest_book:v1
 ```
 
 ### Image details
@@ -527,10 +490,10 @@ docker compose logs -f
 docker compose ps
 
 # Scout scan
-docker scout quickview guestbook:v1
-docker scout cves guestbook:v1
+docker scout quickview guest_book:v1
+docker scout cves guest_book:v1
 
 # Push to Hub
-docker tag guestbook:v1 gerald22/guestbook:v1
-docker push gerald22/guestbook:v1
+docker tag guest_book:v1 gerald22/guest_book:v1
+docker push gerald22/guest_book:v1
 ```
